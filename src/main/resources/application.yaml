@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URL:mongodb://localhost:27017/loan-offer}
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:kafka:9092}
+    consumer:
+      group-id: needLoanEvent-loanOffer-consumer-group
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics,prometheus
