@@ -2,7 +2,7 @@ package com.swapnilsankla.loanofferservice.model
 
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document("loanOffer")
+@Document("offers")
 data class LoanOffer(val customerId: String, val offer: Offer)
 
 data class Offer(val interestRate: Double,
