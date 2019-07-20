@@ -1,7 +1,6 @@
-package com.swapnilsankla.customerservice.listener
+package com.swapnilsankla.loanofferservice.listener
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.swapnilsankla.loanofferservice.listener.NeedLoanEvent
 import com.swapnilsankla.loanofferservice.publisher.LoanOfferDataAvailableEventPublisher
 import com.swapnilsankla.loanofferservice.repository.LoanOfferRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +19,8 @@ class NeedLoanEventListener(@Autowired val repository: LoanOfferRepository,
         Logger.getLogger(NeedLoanEventListener::class.simpleName)
                 .info("needLoanEvent event received for customer ${needLoanEvent.customerId}")
 
-        repository.findByCustomerId(needLoanEvent.customerId)
+        repository
+                .findByCustomerId(needLoanEvent.customerId)
                 .doOnSuccess(loanOfferDataAvailableEventPublisher::publish)
                 .subscribe()
     }
