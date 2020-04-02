@@ -5,6 +5,7 @@ import com.swapnilsankla.loanofferservice.publisher.LoanOfferDataAvailableEventP
 import com.swapnilsankla.loanofferservice.repository.LoanOfferRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.handler.annotation.Headers
 import org.springframework.stereotype.Component
 import java.util.logging.Logger
 
@@ -13,15 +14,18 @@ class NeedLoanEventListener(@Autowired val repository: LoanOfferRepository,
                             @Autowired val objectMapper: ObjectMapper,
                             @Autowired val loanOfferDataAvailableEventPublisher: LoanOfferDataAvailableEventPublisher) {
 
+    private val logger = Logger.getLogger(NeedLoanEventListener::class.simpleName)
+
     @KafkaListener(topics = ["needLoanEvent"])
-    fun listen(needLoanEventString: String) {
+    fun listen(needLoanEventString: String, @Headers headers: Map<String, Any>) {
+        val traceId = headers["uber-trace-id"] as? ByteArray ?: ByteArray(1)
+
         val needLoanEvent = objectMapper.readValue(needLoanEventString, NeedLoanEvent::class.java)
-        Logger.getLogger(NeedLoanEventListener::class.simpleName)
-                .info("needLoanEvent event received for customer ${needLoanEvent.customerId}")
+        logger.info("needLoanEvent event received for customer ${needLoanEvent.customerId}")
 
         repository
                 .findByCustomerId(needLoanEvent.customerId)
-                .doOnSuccess(loanOfferDataAvailableEventPublisher::publish)
+                .doOnSuccess { loanOfferDataAvailableEventPublisher.publish(it, traceId) }
                 .subscribe()
     }
 }
