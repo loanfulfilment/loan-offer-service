@@ -1,8 +1,5 @@
 package com.swapnilsankla.loanofferservice
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.swapnilsankla.loanofferservice.listener.NeedLoanEvent
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
